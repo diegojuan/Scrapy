@@ -1,0 +1,25 @@
+ a recolectar
+
+
+La pagina tiene varios Items, los Item estan represantados por la siguiente regexp
+
+items = response.xpath('//*[@class="item-inner"]')
+
+Para iterar sobre cada Item, debemos acceder al arreglo segun el indice
+
+ uno = items[0]
+
+
+Los campos a recolectar son los siguientes:
+
+imagen = uno.xpath('.//*[@class="primary-image"]/@src').extract()
+
+precio = uno.xpath('.//*[@class="price"]/text()').extract()
+
+nombre = uno.xpath('.//*[@class="product-name"]/a/@title').extract()
+
+
+En la parte de abajo se encuentran las pestañas de navegacion
+
+http://www.dislicoresstore.com/vinos.html?p=2
+
