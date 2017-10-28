@@ -4,23 +4,24 @@ import scrapy
 # Como la pagina usa JS, cargamos la libreria scrapy_splash, ya hemos
 # definido la conexion en settings.py
 
-from scrapy_splash import SplashRequest
-
 
 class VinosSpider(scrapy.Spider):
     name = 'vinos'
     allowed_domains = ['dislicoresstore.com']
     start_urls = ['http://www.dislicoresstore.com/vinos.html']
 
-    def start_requests(self):
-        for url in self.start_urls:
-            yield SplashRequest(url, self.parse,
-                                endpoint='render.html',
-                                args={'wait': 0.5},
-                                )
-
     def parse(self, response):
+        url_init = 'http://www.dislicoresstore.com/vinos.html'
+        for i in range(1, 6):
+            url = url_init + "?p=" + str(i)
 
+            yield scrapy.Request(url, callback=self.parse_results, meta={
+                'splash': {'endpoint': 'render.html',
+                           'args': {'wait': 0.5}},
+                'url': url
+            })
+
+    def parse_results(self, response):
         vinos = response.xpath('//*[@class="item-inner"]')
         for vino in vinos:
             nombre = vino.xpath(
@@ -33,11 +34,3 @@ class VinosSpider(scrapy.Spider):
             print precio
             print foto
             print '\n'
-
-        #next_page_url = response.xpath('//*[@class="button next i-next"]/@href').extract_first()
-        #next_page_url = "http://www.dislicoresstore.com/vinos.html?p=4"
-        for i in range(2, 5):
-            next_page_url = "http://www.dislicoresstore.com/vinos.html?p=" + \
-                str(i)
-        #   print next_page_url
-            yield scrapy.Request(next_page_url)
