@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 # Cargamos la libreria Scrapy
 import scrapy
-# Como la pagina usa JS, cargamos la libreria scrapy_splash, ya hemos
-# definido la conexion en settings.py
 
 
 class VinosSpider(scrapy.Spider):
@@ -11,9 +9,9 @@ class VinosSpider(scrapy.Spider):
     start_urls = ['http://www.dislicoresstore.com/vinos.html']
 
     def parse(self, response):
-        url_init = 'http://www.dislicoresstore.com/vinos.html'
+
         for i in range(1, 6):
-            url = url_init + "?p=" + str(i)
+            url = VinosSpider.start_urls[0] + "?p=" + str(i)
 
             yield scrapy.Request(url, callback=self.parse_results, meta={
                 'splash': {'endpoint': 'render.html',
@@ -27,10 +25,5 @@ class VinosSpider(scrapy.Spider):
             nombre = vino.xpath(
                 './/*[@class="product-name"]/a/@title').extract_first()
             precio = vino.xpath('.//*[@class="price"]/text()').extract_first()
-            foto = vino.xpath(
-                './/*[@class="primary-image"]/@src').extract_first()
-            print '\n'
-            print nombre
-            print precio
-            print foto
-            print '\n'
+
+            print(nombre.strip() + ': ' + precio.strip() + '\n')
